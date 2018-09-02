@@ -1,7 +1,11 @@
 # Image Stimuli
 *.jpg
 *.bmp
+*.avi
 
 # Sensitive files - payment and subject notes
 *payment* 
 *subject*
+
+# large sized files
+*FaceROI_GLM_results.pptx
