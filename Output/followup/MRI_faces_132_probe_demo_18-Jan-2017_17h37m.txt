@@ -1,0 +1,2 @@
+subjectID	scanner	order	runtrial	onsettime	ImageLeft	ImageRight	TypeLeft	TypeRight	IsleftGo	Response	PairType	Outcome	RT 
+MRI_faces_132	1	2	1	0	3090.jpg	4001.jpg	1	5	1	x	1	999	999000.00 

@@ -1,0 +1,9 @@
+subjectID	runtrial	onsettime	ImageLeft	ImageRight	StimNumLeft	StimNumRight	Response	Outcome	RT
+MRI_faces_102	1	5.164524e-01	4084.jpg	4251.jpg	7	8	u	0	1.235644e+03
+MRI_faces_102	2	4.020371e+00	4001.jpg	3185.jpg	5	3	i	0	9.717188e+02
+MRI_faces_102	3	7.507602e+00	3090.jpg	3099.jpg	1	2	u	0	1.420492e+03
+MRI_faces_102	4	1.101152e+01	3224.jpg	4051.jpg	4	6	u	0	1.380568e+03
+MRI_faces_102	5	1.451544e+01	3185.jpg	3224.jpg	3	4	i	0	1.460650e+03
+MRI_faces_102	6	1.801936e+01	4251.jpg	3099.jpg	8	2	i	0	1.508734e+03
+MRI_faces_102	7	2.150660e+01	3090.jpg	4084.jpg	1	7	i	0	1.389495e+03
+MRI_faces_102	8	2.501052e+01	4051.jpg	4001.jpg	6	5	i	0	1.461577e+03

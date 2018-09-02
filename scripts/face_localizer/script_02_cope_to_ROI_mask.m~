@@ -1,0 +1,77 @@
+% This code uses probability ROI masks based on anatomical and results from
+% the functional localizer to create a functional ROI mask.
+
+clear;
+close all; 
+
+% create environment in order to be able to run FSL from Matlab
+setenv('FSLDIR','/share/apps/fsl/'); %the FSL folder
+setenv('FSLOUTPUTTYPE','NIFTI_GZ'); %the output type
+setenv('PATH', [getenv('PATH') ':/share/apps/fsl/bin']);
+
+% Define the following variables
+subjects = 1:50;
+session = 1;
+model_name = 'model001';
+task_name = 'task-localizer';
+cope = 3;
+main_path = [pwd,'/../../'];
+ROI_anat_path = [pwd,'/Anatomical_ROI/'];
+
+ses_name = sprintf('ses-%02i',session);
+cope_name = sprintf('cope%i',cope);
+ROI = dir([ROI_anat_path,'*.nii.gz']);
+
+for subject = subjects
+    sub_name =  sprintf('sub-%03i',subject);
+        sub_path = [pwd,'/Functional_ROI/',sub_name,'/'];
+if isempty(dir(sub_path))
+    mkdir(sub_path)
+end
+    
+cope_path_origin = [main_path,sub_name,'/',ses_name,'/model/',model_name,'/',sub_name,'_',ses_name,'_',task_name,'.gfeat/',cope_name,'.feat/thresh_zstat1.nii.gz'];
+cope_path= [sub_path,'localizer_activation.nii.gz'];
+copyfile(cope_path_origin,cope_path)
+end
+ProbabilityMaskPath = [pwd,'/Harvard_Oxford_probability_masks/'];
+ref_functional = [pwd,'/example_output_nifty.nii.gz']; % reference func image. will be used to match dimensions
+OutputPath = [pwd,'/Anatomical_ROI/'];
+ROI_names = {'FFA','OFA','STS'};
+ROI_codes = {[38,39],40,[10,12]}; % each anatomical ROI's components to be merged
+
+[~,ref_dim_tmp]=system(['fslsize ',ref_functional]);
+ref_dim = strsplit(ref_dim_tmp);
+dim_x=str2double(ref_dim{2});
+dim_y=str2double(ref_dim{4});
+dim_z=str2double(ref_dim{6});
+
+h=waitbar(0,'Please wait');
+for ROI_ind = 1:length(ROI_names)
+    ROI_component_1 = dir(sprintf('%s%i*',ProbabilityMaskPath,ROI_codes{ROI_ind}(1)));
+    ROI_probability_mask_output = sprintf('%s%s_probability_mask.nii.gz',OutputPath,ROI_names{ROI_ind});
+    ROI_probability_mask_output_right = [ROI_probability_mask_output(1:end-7),'_right.nii.gz'];
+    ROI_probability_mask_output_left = [ROI_probability_mask_output(1:end-7),'_left.nii.gz'];
+    
+    copyfile([ROI_component_1.folder,'/',ROI_component_1.name],ROI_probability_mask_output);
+    % merge anatomical regions of the ROI using
+    for ROI_component = ROI_codes{ROI_ind}
+        if find(ROI_component == ROI_codes{ROI_ind}) > 1 % if this is not the first component
+            ROI_component_dir = dir(sprintf('%s%i*',ProbabilityMaskPath,ROI_component));
+            ROI_component_fullpath = [ROI_component_dir.folder,'/',ROI_component_dir.name];
+            system(sprintf('fslmaths %s -add %s %s',ROI_component_fullpath,ROI_probability_mask_output,ROI_probability_mask_output));
+        end
+    end
+    % Change unites to percentages
+    system(sprintf('fslmaths %s -mul 0.01 %s',ROI_probability_mask_output,ROI_probability_mask_output));
+    % Change resolution to reference functional image
+    system(sprintf('flirt -in %s -ref %s  -applyxfm -usesqform -out %s',ROI_probability_mask_output,ref_functional,ROI_probability_mask_output));
+    
+    % split to left hemisphere (from x = 0 to x = dim_x/2)
+    system(sprintf('fslroi %s %s 0 %i 0 %i 0 %i',ROI_probability_mask_output,ROI_probability_mask_output_left,floor(dim_x/2),dim_y,dim_z));
+    % split to right hemisphere (from x = dim_x/2 to x = dim_x)
+    system(sprintf('fslroi %s %s %i %i 0 %i 0 %i',ROI_probability_mask_output,ROI_probability_mask_output_right,floor(dim_x/2+1),dim_x,dim_y,dim_z));
+    % delete the merged ROI
+    delete(ROI_probability_mask_output)
+    waitbar(ROI_ind/length(ROI_names))
+end
+close(h)

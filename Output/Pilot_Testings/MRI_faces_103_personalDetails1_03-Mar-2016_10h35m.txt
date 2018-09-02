@@ -1,0 +1,2 @@
+subjectID	order	date	gender(1-female, 2-male)	age	dominant hand (1-right, 2-left)	occupation
+MRI_faces_103	1	03-Mar-2016_10h35m	1	35	1	Phd student in chemical physics (chemistry dp)

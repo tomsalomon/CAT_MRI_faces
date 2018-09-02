@@ -1,0 +1,6 @@
+Subject	ROI_index	ROI_name	old_cluster	new_cluster
+sub-003	4	OFA_right	8	10
+sub-017	3	OFA_left	4	10
+sub-019	4	OFA_right	0	6
+sub-030	3	OFA_left	3	0
+sub-043	1	FFA_left	12	 12

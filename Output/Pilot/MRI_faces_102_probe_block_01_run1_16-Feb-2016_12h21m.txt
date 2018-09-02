@@ -1,0 +1,1 @@
+subjectID	scanner	order	block	run	trial	onsettime	ImageLeft	ImageRight	bidIndexLeft	bidIndexRight	IsleftGo	Response	PairType	Outcome	RT	bidLeft	bidRight	ixationTime	

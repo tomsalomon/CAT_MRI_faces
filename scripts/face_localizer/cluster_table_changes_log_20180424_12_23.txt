@@ -1,0 +1,2 @@
+Subject	ROI_index	ROI_name	old_cluster	new_cluster
+sub-017	5	STS_left	1	9

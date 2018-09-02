@@ -1,0 +1,2 @@
+Binary ranking demo crashed:	 0
+Binary ranking crashed:	 1

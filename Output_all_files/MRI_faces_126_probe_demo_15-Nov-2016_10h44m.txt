@@ -1,0 +1,5 @@
+subjectID	scanner	order	runtrial	onsettime	ImageLeft	ImageRight	TypeLeft	TypeRight	IsleftGo	Response	PairType	Outcome	RT 
+MRI_faces_126	1	2	1	0	3090.jpg	4001.jpg	1	5	0	b	1	0	714.01 
+MRI_faces_126	1	2	2	10	3099.jpg	4051.jpg	2	6	1	b	1	1	1047.36 
+MRI_faces_126	1	2	3	13	3185.jpg	4084.jpg	3	7	1	y	1	0	619.95 
+MRI_faces_126	1	2	4	16	3224.jpg	4251.jpg	4	8	0	b	1	0	1184.67 

@@ -1,0 +1,1 @@
+subjectID	scanner	order	runtrial	onsettime	ImageLeft	ImageRight	TypeLeft	TypeRight	IsleftGo	Response	PairType	Outcome	RT 
