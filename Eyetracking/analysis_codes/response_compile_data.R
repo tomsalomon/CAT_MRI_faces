@@ -4,14 +4,13 @@ library(rstudioapi)
 
 rm(list=ls())
 
-Group = 1 # 1- experimental group; 2- control group
 sessionNum = 1 # 1- session 1 ; 2- follow-up
 
 current_path=dirname(rstudioapi::getActiveDocumentContext()$path)
 setwd(current_path)
 data_path = './../pre_processed_data/'
 
-# define which subjects
+# define which subjects to analyze
 if (sessionNum==1) {
   subjects=c(102,104:114,116:117,119:125,127:141,143:149)
   scans = c(1,2)
