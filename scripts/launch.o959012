@@ -1,0 +1,10 @@
+Warning: no access to tty (Bad file descriptor).
+Thus no job control in this shell.
+ WORKING DIR:   ./
+Launcher: Starting without resource manager integration.
+WARNING: LAUNCHER_HOSTFILE is not set. Defaulting to localhost.
+expr: non-integer argument
+ERROR: LAUNCHER_NPROCS is not set.
+ 
+ Parameteric Job Complete
+ 

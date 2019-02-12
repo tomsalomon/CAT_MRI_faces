@@ -15,7 +15,7 @@
 
 clear 
 
-subjects=[102,104:114,116:117,119:125,127:141,143:149]; % Define here your subjects' codes.
+subjects=[102,104:114,116:117,119:125,127:141,143:144,146:149]; % Define here your subjects' codes.
 %exclude:
 % 101 - Probe - missing LV NoGo 
 % 103 - Technical audio issue during training. Did an additional training run without proper sound
@@ -24,6 +24,7 @@ subjects=[102,104:114,116:117,119:125,127:141,143:149]; % Define here your subje
 % said he was not concentratred.
 % 126 - clinical findings
 % 142 - Training - minimal ladder
+% 145 - poor quality scans
 % 151 - clinical findings
 
 analysis_path=pwd; % Analysis folder location

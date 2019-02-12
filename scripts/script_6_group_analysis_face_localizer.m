@@ -1,5 +1,4 @@
 %% open script: Define env and variables
-
 clear;
 close all;
 tic
@@ -10,14 +9,14 @@ setenv('FSLOUTPUTTYPE', 'NIFTI_GZ'); % this to tell what the output type would b
 setenv('PATH', [getenv('PATH') ':/share/apps/fsl/bin']);
 
 % Define these variables
-ses_num=2;
-task_num=3;
+ses_num=1;
+task_num=1;
 if ses_num ==1
     Subjects=[2,4:14,16:17,19:25,27:41,43:49];
 elseif ses_num ==2
     Subjects=[2,4:5,8,10:12,14,17,20:23,27,29:31,33:36,38:40,44];
 end
-number_cores = 28;
+number_cores = 40;
 
 task_names={'task-responsetostim','task-training','task-probe','task-localizer'};
 task_name=task_names{task_num};
@@ -38,9 +37,9 @@ else
     behave_data_path = [behave_data_path_ses1,'ses-02/'];
 end
 
-ROI_names = {'ROI_01_FFA_left';'ROI_02_FFA_right';'ROI_03_OFA_left';'ROI_04_OFA_right';'ROI_05_STS_left';'ROI_06_STS_right'};
-ROI_names_short = {'FFA left';'FFA right';'OFA left';'OFA right';'STS left';'STS right'};
-ROI_names_very_short = {'FFA_L';'FFA_R';'OFA_L';'OFA_R';'STS_L';'STS_R'};
+ROI_names = {'ROI_01_FFA_right';'ROI_02_FFA_left';'ROI_03_OFA_right';'ROI_04_OFA_left';'ROI_05_STS_right';'ROI_06_STS_left'};
+ROI_names_short = {'FFA right';'FFA left';'OFA right';'OFA left';'STS right';'STS left'};
+ROI_names_very_short = {'FFA_R';'FFA_L';'OFA_R';'OFA_L';'STS_R';'STS_L'};
 contrast_name_lev3 = {'mean';'mod by probe effect'};
 switch task_num
     case 1
@@ -49,6 +48,7 @@ switch task_num
         contrast_fix_lev1 = [1,1,1,1,1,1,1,1,1,1,1,1,1,4,4,4,2,1,1,2,1,1,2,2,2,2,6];
         num_of_copes_lev2 = 5;
         contrast_name_lev2 ={'after > before';'before > after';'before';'after';'mean'};
+        copes_lev2_2skip = [2,5];
         contrast_fix_lev2 = [1,1,1,1,2];
         baseline_2_max = 0.4075; % hight with double gamma - 2s stim
         
@@ -58,6 +58,7 @@ switch task_num
         contrast_fix_lev1 = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2];
         num_of_copes_lev2 = 10;
         contrast_name_lev2 ={'scan1';'scan2';'scan3';'scan4';'scan5';'scan6';'scan7';'scan8';'last > first';'linear trend'};
+        copes_lev2_2skip = [2:7];
         contrast_fix_lev2 = [1,1,1,1,1,1,1,1,1,10];
         baseline_2_max = 0.2088; % hight with double gamma - 1s stim
         
@@ -67,6 +68,7 @@ switch task_num
         contrast_fix_lev1 = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2];
         num_of_copes_lev2 = 1;
         contrast_name_lev2 ={'mean'};
+        copes_lev2_2skip = [];
         contrast_fix_lev2 = 1;
         baseline_2_max = 0.2088; % hight with double gamma - 1s stim
         
@@ -74,6 +76,7 @@ switch task_num
         num_of_copes_lev1=[];
         contrast_name={ };
 end
+
 [is_HV_contrast,is_LV_contrast,is_All_contrast,is_Sanity_contrast,...
     is_Neutral_contrast]=deal(false(size(contrast_name)));
 
@@ -103,18 +106,22 @@ probe_mudulation=prop_chose_Go(:,1)*is_HV_contrast'+prop_chose_Go(:,2)*is_LV_con
 probe_mudulation_demeaned=detrend(probe_mudulation,'constant');
 
 % initiate parallel computing
-parpool(number_cores)
-
+if isempty(gcp('nocreate'))
+    parpool(number_cores)
+end
 %% Multiply functional mask by BOLD data
 
-num_of_iterations = num_of_copes_lev1*num_of_copes_lev2*length(Subjects)*length(ROI_names);
+num_of_iterations = num_of_copes_lev1*(num_of_copes_lev2-length(copes_lev2_2skip))*length(Subjects)*length(ROI_names);
 parfor_progress(num_of_iterations);
 parfor cope = 1:num_of_copes_lev1
     for cope_lev2 = 1:num_of_copes_lev2
+        if ismember(cope_lev2,copes_lev2_2skip) % skip uninteresting lev2 copes
+            continue
+        end
         cope_output_path = sprintf('%s/cope%i/cope%i',output_path,cope,cope_lev2);
         mkdir(cope_output_path)
         scale_factor = (100 * baseline_2_max ^ 2) / (contrast_fix_lev1(cope) * contrast_fix_lev2(cope_lev2));
-        
+        scale_factor=1;
         for sub = Subjects
             sub_name = sprintf('sub-%03i',sub);
             sub_2_lev_cope = sprintf('%s/../%s/%s/model/model001/*%s.gfeat/cope%i.feat/stats/cope%i.nii.gz',...
@@ -144,37 +151,43 @@ h = waitbar(0,'Extracting data from nifti files');
 progress = 0;
 for cope = 1:num_of_copes_lev1
     for cope_lev2 = 1:num_of_copes_lev2
+        progress = progress + 1/(num_of_copes_lev2*num_of_copes_lev1);
+        waitbar(progress,h);
+        if ismember(cope_lev2,copes_lev2_2skip) % skip uninteresting lev2 copes
+            continue
+        end
         cope_output_path = sprintf('%s/cope%i/cope%i',output_path,cope,cope_lev2);
         output_files = dir([cope_output_path,'/sub*.nii.gz']);
         tmp1 = cell(length(output_files),1);
-        
         parfor file_ind = 1:length(output_files)
             file_path = [output_files(file_ind).folder,'/', output_files(file_ind).name] ;
             nifti_data_raw = niftiread(file_path);
             nifti_data_raw = nifti_data_raw(:);
-            nifti_data_non_zero = mean(nifti_data_raw(nifti_data_raw~=0));
+            nifti_data_no_zero = nifti_data_raw(nifti_data_raw~=0);
+            nifti_data_mean = mean(nifti_data_no_zero);
             % first cell - file name, second cell - non-zero data
-            tmp1{file_ind} = {output_files(file_ind).name, nifti_data_non_zero};
+            tmp1{file_ind} = {output_files(file_ind).name, nifti_data_mean,nifti_data_no_zero};
         end
         results{cope,cope_lev2}=tmp1;
-        progress = progress + 1/(num_of_copes_lev2*num_of_copes_lev1);
-        waitbar(progress,h);
     end
 end
 close(h)
 
 %% Merge results into one dataframe
-
-%h = waitbar(0,'Organizing data into one dataframe');
 disp('Organizing data into one dataframe')
 disp('==================================')
 
 num_of_iterations = num_of_copes_lev1*num_of_copes_lev2;
 parfor_progress(num_of_iterations);
 results_mat = zeros(1,5);
-tic
+full_data = cell(1);
 parfor cope = 1:num_of_copes_lev1
     for cope_lev2 = 1:num_of_copes_lev2
+        parfor_progress;
+        if ismember(cope_lev2,copes_lev2_2skip) % skip uninteresting lev2 copes
+            continue
+        end
+        
         % number of valid clusters with results
         num_clusters = length(results{cope,cope_lev2});
         for cluster = 1:num_clusters
@@ -190,15 +203,15 @@ parfor cope = 1:num_of_copes_lev1
             results_tmp(:,4) = cope_lev2;
             results_tmp(:,5) = cope;
             results_mat = [results_mat;results_tmp];
-%             progress = progress + 1/(num_clusters*num_of_copes_lev2*num_of_copes_lev1);
-%             waitbar(progress,h);
+            %             progress = progress + 1/(num_clusters*num_of_copes_lev2*num_of_copes_lev1);
+            %             waitbar(progress,h);
+            full_data = [full_data;{results{cope,cope_lev2}{cluster}{3}}]
         end
-        parfor_progress;
     end
 end
 parfor_progress(0)
-toc
 results_mat(1,:)=[];
+full_data(1)=[];
 
 % Save results in a table
 results_table = array2table(results_mat,'VariableNames',...
@@ -206,7 +219,8 @@ results_table = array2table(results_mat,'VariableNames',...
 results_table.sub = nominal(results_table.sub);
 results_table.BOLD = double(results_table.BOLD);
 results_table.cope_lev1_str = contrast_name(results_table.cope_lev1); % add cope titles
-
+results_table.full_data = full_data;
+results_table.ROI_size = cellfun(@length,results_table.full_data);
 %% Calculate statistical model
 for cope_lev3 = 1:2
     % cope 1 - mean
@@ -227,20 +241,20 @@ for cope_lev3 = 1:2
         
         % tmp_model = fitlme(results_table(selection,:),'BOLD ~ 1 + (1|sub)'); % mixed model linear regression
         try
-        switch cope_lev3
-            case 1
-                tmp_model = fitlm(mean_by_sub,'mean_BOLD ~ 1 '); % one sample ttest linear regression
-            case 2
-                if all(mean_by_sub.probe==0)
-                    continue
-                end
-                tmp_model = fitlm(mean_by_sub,'mean_BOLD ~ 1 + probe'); % modulation by probe effect
-        end
-        
-        models{model_ind} = tmp_model;
-        model_p(model_ind) = tmp_model.Coefficients.pValue(end);
-        Estimates(model_ind)= tmp_model.Coefficients.Estimate(end);
-        SEs(model_ind) = tmp_model.Coefficients.SE(end);
+            switch cope_lev3
+                case 1
+                    tmp_model = fitlm(mean_by_sub,'mean_BOLD ~ 1 '); % one sample ttest linear regression
+                case 2
+                    if all(mean_by_sub.probe==0)
+                        continue
+                    end
+                    tmp_model = fitlm(mean_by_sub,'mean_BOLD ~ 1 + probe'); % modulation by probe effect
+            end
+            
+            models{model_ind} = tmp_model;
+            model_p(model_ind) = tmp_model.Coefficients.pValue(end);
+            Estimates(model_ind)= tmp_model.Coefficients.Estimate(end);
+            SEs(model_ind) = tmp_model.Coefficients.SE(end);
         catch
         end
         waitbar(model_ind/num_models,h)
@@ -263,19 +277,22 @@ for cope_lev3 = 1:2
     
     %% Plot significant results
     for cope_lev2 = 1:num_of_copes_lev2
-        
+        if ismember(cope_lev2,copes_lev2_2skip) % skip uninteresting lev2 copes
+            continue
+        end
         sig_contrasts = unique(stats_table.cope_1(stats_table.p < 0.05 & stats_table.cope_2 == cope_lev2));
-        
         fig=figure('Name',sprintf('cope: %i',cope_lev2),'units','normalized','outerposition',[0 0 1 1]);
         p = uipanel('Parent',fig,'BorderType','none');
         p.Title = sprintf('%s - 2nd level cope %i (%s) - 3rd level %s',task_name,cope_lev2,contrast_name_lev2{cope_lev2},contrast_name_lev3{cope_lev3});
         p.TitlePosition = 'centertop';
         p.FontSize = 22;
         p.FontWeight = 'bold';
-        
+        pause(0.01)
+        plot_rows = 3;
+        plot_cols = max(4,ceil(length(sig_contrasts)/plot_rows));
         for cope_ind = 1:length(sig_contrasts)
             cope_lev1 = sig_contrasts(cope_ind);
-            subplot(3,ceil((1+length(sig_contrasts))/3),cope_ind,'Parent',p)
+            subplot(plot_rows,plot_cols,cope_ind,'Parent',p)
             
             pos = stats_table.cope_1 == cope_lev1 & stats_table.cope_2 == cope_lev2;
             % Plot means
@@ -295,18 +312,9 @@ for cope_lev3 = 1:2
             set(gca,'XTickLabel',ROI_names_short,'XTickLabelRotation', 45,'FontSize',6)
             pause(0.01)
         end
-        legend_plot=subplot(3,ceil((1+length(sig_contrasts))/3),1+cope_ind,'Parent',p);
-        bar(0*diag(stats_table.BOLD_mean(pos)),'stacked');
-        ylim([1,2]);
-        pause(0.01)
-        set(gca,'xtick',[])
-        set(gca,'ytick',[])
-        title('legend');
-        leg = legend(ROI_names_short,'Interpreter', 'none','location','none','position',legend_plot.Position);
-        set(leg,'Box','off')
         % Save plot to output directory
-        %print(sprintf('%s/Results_lev2_cope%i.pdf',output_path,cope_lev2),'-dpdf','-bestfit');
         saveas(fig,sprintf('%s/Results_lev2_cope%i_lev3_cope%i.jpg',output_path,cope_lev2,cope_lev3));
+        close(fig)
     end
 end
 
@@ -315,5 +323,5 @@ end
 save([output_path,'/results.mat'],'results_table','stats_table');
 save([output_path,'/results_workspace.mat']);
 % close parallel pool
-delete(gcp('nocreate'));
+%delete(gcp('nocreate'));
 toc

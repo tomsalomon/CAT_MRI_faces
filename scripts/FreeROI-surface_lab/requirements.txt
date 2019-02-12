@@ -1,0 +1,7 @@
+nibabel
+nose
+numpy
+scikit-image
+scipy
+pyqt=4
+mayavi

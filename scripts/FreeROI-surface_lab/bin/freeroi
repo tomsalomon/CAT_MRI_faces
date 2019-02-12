@@ -1,0 +1,235 @@
+#! /usr/bin/env python
+# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
+# vi: set ft=python sts=4 ts=4 sw=4 et:
+
+"""Main application for PyBP GUI."""
+
+import os
+import sys
+import argparse
+
+os.environ['ETS_TOOLKIT'] = 'qt4'
+os.environ['QT_API'] = 'pyqt'
+
+import sip
+API_NAMES = ['QDate', 'QDateTime', 'QString', 'QTextStream', 'QTime',
+             'QUrl', 'QVariant']
+API_VERSION = 2
+for name in API_NAMES:
+    sip.setapi(name, API_VERSION)
+
+from PyQt4.QtGui import QApplication
+from PyQt4.QtCore import QModelIndex
+
+from froi import utils as froi_utils
+from froi.main import BpMainWindow
+
+
+def _check_arg_len(arg, length):
+    if len(arg) != length:
+        print 'Input error, please check it out.'
+        sys.exit()
+
+
+def _thresh_float(arg):
+    new_arg = []
+    for thresh in arg:
+        try:
+            tmp = float(thresh)
+        except ValueError:
+            tmp = None
+        new_arg.append(tmp)
+    return new_arg
+
+
+def main():
+    """Main entrance."""
+    # get data directory
+    data_dir = froi_utils.get_data_dir()
+
+    # get labelconfig settings
+    label_config_dir = os.path.join(data_dir, 'labelconfig')
+    label_config_suffix = 'lbl'
+    config_file = os.listdir(label_config_dir)
+    config_file = [item[0:-(len(label_config_suffix)+1)] for item in config_file
+                   if item.split('.')[-1] == label_config_suffix]
+
+    parser = argparse.ArgumentParser(description='FreeROI GUI',
+                                     prog='freeroi',
+                                     usage='%(prog)s [-data data-file '
+                                           '-lt low-threshold-value '
+                                           '-ht high-threshold-value '
+                                           '-c colormap] [-data ...] '
+                                           '[-n new_volume_name] '
+                                           '[-label label-configuration] '
+                                           '[-h]\n'
+                                           'Attention: -n parameter could not '
+                                           'be used alone')
+    parser.add_argument('-data',
+                        dest='data_list',
+                        metavar='structure or function data',
+                        required=False,
+                        action='append',
+                        help='specify data you want to see')
+    parser.add_argument('-lt',
+                        dest='low_thresh',
+                        metavar='low-threshold-value',
+                        required=False,
+                        action='append',
+                        help='Low threshold value when visualize data')
+    parser.add_argument('-ht',
+                        dest='high_thresh',
+                        metavar='high-threshold-value',
+                        required=False,
+                        action='append',
+                        help='High threshold value when visualize data')
+    parser.add_argument('-c',
+                        dest='colormap',
+                        metavar='colormap',
+                        choices=['gray',
+                                 'red2yellow',
+                                 'blue2cyanblue',
+                                 'red',
+                                 'green',
+                                 'blue',
+                                 'rainbow',
+                                 'jet'] + config_file,
+                        required=False,
+                        action='append',
+                        help='Specify the colormap the data would display in')
+    parser.add_argument('-n',
+                        dest='new_names',
+                        metavar='new_items_name',
+                        required=False,
+                        action='append',
+                        help="Specify new items' name")
+    parser.add_argument('-label',
+                        dest='label_config',
+                        metavar='reference_label_configuration',
+                        choices=config_file,
+                        required=False,
+                        help='Specify a label configuration name')
+    parser.add_argument('-type',
+                        dest='type',
+                        metavar='data type',
+                        choices=['surface', 'volume'],
+                        required=False,
+                        help='Specify data type')
+    parser.add_argument('-view',
+                        dest='view', nargs=2,
+                        metavar="phi and theta angles",
+                        required=False,
+                        help="phi and theta angles of mayavi camera view")
+    parser.add_argument('-dest',
+                        dest='dest',
+                        metavar='destination directory',
+                        required=False,
+                        help='specify a directory where output file should be')
+
+    args = parser.parse_args()
+
+    # Start GUI
+    # app = QApplication([])
+    app = QApplication.instance()
+
+    win = BpMainWindow()
+    win.config_extra_settings(data_dir)
+    win.show()
+
+    # set output directory
+    if args.dest:
+        win.set_save_dir(args.dest)
+
+    # add images
+    if args.data_list:
+
+        num_data = len(args.data_list)
+        if args.low_thresh:
+            _check_arg_len(args.low_thresh, num_data)
+            args.low_thresh = _thresh_float(args.low_thresh)
+        else:
+            args.low_thresh = [None] * num_data
+        if args.high_thresh:
+            _check_arg_len(args.high_thresh, num_data)
+            args.high_thresh = _thresh_float(args.high_thresh)
+        else:
+            args.high_thresh = [None] * num_data
+        if args.colormap:
+            _check_arg_len(args.colormap, num_data)
+        else:
+            args.colormap = ['gray'] * num_data
+
+        # force users to specify data type
+        if not args.type:
+            while True:
+                args.type = raw_input("Which type dose the function data belong to? (surface or volume):")
+                if args.type in ('surface', 'volume'):
+                    break
+
+        if args.type == 'volume':
+            try:
+                win._add_volume_img(args.data_list[0],
+                                    view_min=args.low_thresh[0],
+                                    view_max=args.high_thresh[0],
+                                    colormap=args.colormap[0])
+                if args.label_config:
+                    win._label_config_center.set_label_config(args.label_config)
+            except:
+                print 'Load first image error!'
+                sys.exit()
+            for i, data in enumerate(args.data_list[1:], 1):
+                colormap = args.colormap[i]
+                if colormap not in ['gray', 'red2yellow', 'blue2cyanblue',
+                                    'red', 'green', 'blue', 'rainbow']:
+                    colormap = win._label_config_center.get_label_config_by_name(colormap)
+                try:
+                    win._add_volume_img(data,
+                                        view_min=args.low_thresh[i],
+                                        view_max=args.high_thresh[i],
+                                        colormap=colormap)
+                except:
+                    print 'Load image ' + data + ' error!'
+                    raise
+            if args.new_names:
+                for new_name in args.new_names:
+                    try:
+                        win.new_volume_image(data=None, name=new_name,
+                                             colormap='gray')
+                    except:
+                        print 'Could not create volume ' + new_name
+                        raise
+        else:
+
+            if args.view:
+                view = [float(_) for _ in args.view]
+            else:
+                view = (0, 0)
+
+            try:
+                win._add_surface_img(args.data_list[0], QModelIndex(),
+                                     view=view)
+            except:
+                print 'Load surface failed!'
+                raise
+
+            index = win.surface_model.index(0, 0, QModelIndex())
+            for i, data in enumerate(args.data_list[1:], 1):
+                try:
+                    win._add_surface_img(source=data, index=index,
+                                         vmin=args.low_thresh[i],
+                                         vmax=args.high_thresh[i],
+                                         colormap=args.colormap[i],
+                                         view=view)
+                except:
+                    print 'Load {} failed!'.format(data)
+                    raise
+
+            if args.new_names:
+                print 'can not create new blank overlay for surface data at present!'
+                sys.exit()
+
+    sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()

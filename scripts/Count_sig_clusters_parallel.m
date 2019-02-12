@@ -2,10 +2,10 @@ clear;
 
 % Define these variables
 task_num=1;
-ses_num=2;
+ses_num=1;
 experiment_path='/export/home/DATA/schonberglab/MRI_faces/analysis/BIDS/derivatives/';
 group_analysis_path=[experiment_path,'models/model001/ses-',sprintf('%02.f',ses_num),'/group_analysis/'];
-zthresh='SVC_04'; %2.3; 3.1 or 'randomise' or 'SVC'
+zthresh='SVC_03'; %2.3; 3.1 or 'randomise' or 'SVC_0X'
 number_cores = 26;
 
 % initiate parallel computing

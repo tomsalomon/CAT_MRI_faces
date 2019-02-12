@@ -16,7 +16,7 @@
 clear 
 
 % subjects=[102,104:105,107:108,110:112,114,117,120:123,127,129:136,138:140,143:144]; % Define here your subjects' codes.
-subjects=[102,104:105,108,110:112,114,117,120:123,127,129:131,133:136,138:140,144]; %37 subjects
+subjects=[102,104:105,108,110:112,114,117,120:123,127,129:131,133:136,138:140,144]; %25 subjects
 
 %exclude:
 % 103 was too tired during probe and training.

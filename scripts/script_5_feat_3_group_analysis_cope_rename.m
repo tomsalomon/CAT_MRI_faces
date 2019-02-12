@@ -6,7 +6,7 @@ ses_num=1; % Session number
 task_num=1;
 z_thresh=2.3; % 2.3, 3.1
 SVC = 1; % change to true to perform small volume correction
-SVC_ROI_num = 1; % define the SVC ROI: '01_vmPFC','02_hippocampus','03_SPL','04_striatum'
+SVC_ROI_num = 4; % define the SVC ROI: '01_vmPFC','02_hippocampus','03_SPL','04_striatum'
 
 SVC_ROI_names = {'01_vmPFC','02_hippocampus','03_SPL','04_striatum'};
 if SVC
@@ -16,7 +16,7 @@ else
 end
 
 if ses_num ==1
-    Subjects=[2,4:14,16:17,19:25,27:41,43:49];
+    Subjects=[2,4:14,16:17,19:25,27:41,43:44,46:49];
 elseif ses_num ==2
     Subjects=[2,4:5,8,10:12,14,17,20:23,27,29:31,33:36,38:40,44];
 end

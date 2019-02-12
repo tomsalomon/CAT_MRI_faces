@@ -5,9 +5,9 @@ close all;
 % Define these variables
 task_num=1;
 ses_num=1;
-cope_lev_1=17;
-cope_lev_2=1;
-cope_lev_3=1;
+cope_lev_1=23;
+cope_lev_2=4;
+cope_lev_3=4;
 visualize_fsleyes=false; % True or False
 zthresh='2.3'; % '2.3' or '3.1' or 'SVC_0*'
 

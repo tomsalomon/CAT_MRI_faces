@@ -1,0 +1,84 @@
+Aims for long term evolution
+-----------------------------
+1. New segmentation methods: N-cut, K-means.
+
+TO DO LIST
+----------
+
+** Version: 0.2.4
+
+1. Integrate Volume and Surface Dataset
+2. Multiple-layers display for Surface dataset
+3. GUI-based action support
+
+** Version: 0.2.3
+
+1. Add support for saving files as NIFTI file (nii)
+2. Add support for label management
+3. Add image registration tools (affine transformation)
+4. Add `Atlas reference` tools (ref: fslview)
+5. Update automatic methods for image segment
+6. Image orientation detection & display
+7. Voxel/real world coordinate display
+8. Add snapshot for OrthView.
+-------------------------------------------------------------------------
+
+** Version: 0.2.2
+
+1. Add a new function to calculate the size of a ROI
+2. Clarify the function of ROI merging.
+3. Report the stat info (i.e., peak location, peak value, and cluster size) of
+   a ROI.
+---------------------------------------------------------------------------
+
+** Version: 0.2.1
+
+1. Fix bug in local maximum: clarify the function of least distance, there is
+   something wrong while it is set as 0.
+2. Decimal numbers could be specified in the binarization function.
+3. Modify the coordinate system used in the software, making it consistent
+   with the intuition.
+4. Fix bugs in the OrthView.
+------------------------------------------------------------------------
+
+** Version: 0.2.0
+
+1. Fix bugs.
+2. Improve GUI and group related functions together.
+------------------------------------------------------------------------
+
+** Version: 0.1.4
+
+1. Add Analyses module (descriptive statistic for 3D ROI), including related 
+   algorithms and graphic interface.
+2. ROI boundary detection.
+3. Extract time courses from a voxel or a ROI (a pre-defined ROI or defined 
+   manually on the image, such as a square, a circle or a irregular shape draw
+   with Livewire algorithm).
+4. Transformation form ROI (volume) to label (surface).
+-------------------------------------------------------------------------
+
+** Version: 0.1.3
+
+1. The cursor could be clicked and `moved` in OrthView to select different 
+   slice dynamically.
+2. Link the OrthView to the ROI selector.  
+3. Label size in OrthView could change dynamically to fit the size of the
+   window. 
+4. Slice number in GridView should change dynamically to fit the width of 
+   the ImageView widget.     
+5. Coordinate panel could be used to select a specified position.
+6. Add Region Grow Algorithm.
+7. Add regular ROI generation.
+8. 4D data support.
+---------------------------------------------------------------------------
+
+** Version: 0.1.2
+Issues should be finished before 2012.11.15
+
+1. Automitically update 'value' and 'label' when current selected volume is
+   being changed.
+2. Add user-configuration file in users' home directory to specify some 
+   parameters fitting users' habits.
+3. Separate zoom scale factors of GridView and that of OrthView.
+---------------------------------------------------------------------------

@@ -4,10 +4,10 @@ clear;
 
 % Define these variables
 Subjects=[1:50];
-task_num=3;
-session_num=2;
+task_num=2;
+session_num=1;
+models = 2:7;
 
-designs_dir_path=['/export/home/DATA/schonberglab/MRI_faces/analysis/BIDS/derivatives/models/model001/ses-0',num2str(session_num),'/designs/'];
 
 task_names={'task-responsetostim','task-training','task-probe','task-localizer'};
 num_of_runs_per_task=[2,8,4,2;1,0,4,2];
@@ -22,6 +22,9 @@ minutes = sprintf('%02d', c(5));
 timestamp = [date,'_',hr,'h',minutes,'m'];
 
 fid = fopen(['text_commands/text_5_fixed_effects_',task_name,'_',timestamp,'.txt'] ,'a');
+for model = models
+    model_name = sprintf('model00%i',model);
+    designs_dir_path=['/export/home/DATA/schonberglab/MRI_faces/analysis/BIDS/derivatives/models/',model_name,'/ses-0',num2str(session_num),'/designs/'];
 
 for sub=Subjects
     sub_name=['sub-',num2str(sub,'%03i')];
@@ -30,6 +33,6 @@ for sub=Subjects
         fprintf(fid,['feat ',designs_dir_path,design_name,'\n']);
     end
 end
-
+end
 % either way make sure the file is closed by the end of the script
 fid=fclose(fid);

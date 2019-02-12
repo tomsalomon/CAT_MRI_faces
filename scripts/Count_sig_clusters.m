@@ -1,11 +1,11 @@
 clear;
 
 % Define these variables
-task_num=2;
+task_num=1;
 ses_num=1;
 experiment_path='/export/home/DATA/schonberglab/MRI_faces/analysis/BIDS/derivatives/';
 group_analysis_path=[experiment_path,'models/model001/ses-',sprintf('%02.f',ses_num),'/group_analysis/'];
-zthresh='SVC_01'; %2.3; 3.1 or 'randomise' or 'SVC'
+zthresh='2.3'; %2.3; 3.1 or 'randomise' or 'SVC'
 
 % set FSL environment
 setenv('FSLDIR','/share/apps/fsl/bin/fsl');  % this to tell where FSL folder is
@@ -31,6 +31,10 @@ switch task_num
     case 4
         task_name='task-localizer';
         num_of_level1_copes=[];
+end
+try 
+    zthresh = str2double(zthresh);
+catch
 end
 if isnumeric(zthresh)
 thresh_name=strrep(num2str(zthresh),'.','_');
