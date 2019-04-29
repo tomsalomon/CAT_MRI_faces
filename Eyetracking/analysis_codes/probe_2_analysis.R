@@ -4,12 +4,13 @@ library(lme4)
 library(lmerTest)
 library(rstudioapi)
 library("reshape2")
+library(ggplot2)
 
 # Clear workspace
 rm(list=ls())
 
 # Define these variables:
-sessionNum = 2 # 1- session 1 ; 2- follow-up
+sessionNum = 1 # 1- session 1 ; 2- follow-up
 task_name = "Probe"
 gaze_inclusion_thresh = 0.5 # only include scans with at least this proportion of valid eye-tracking 
 valid_scans_inclusion_thresh = 2  # only include participants with at least this number of valid scans

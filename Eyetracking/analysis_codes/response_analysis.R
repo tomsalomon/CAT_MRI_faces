@@ -46,7 +46,7 @@ if (task_name == "Probe" & sessionNum == 1){
   ignore_bad_eye_tracking = c(ignore_bad_eye_tracking, 102, 105, 110, 121,122,123,135,143,
                               104) # maybe
 }
-subjects = subjects[-(subjects %in% ignore_bad_eye_tracking)]
+subjects = subjects[!(subjects %in% ignore_bad_eye_tracking)]
 
 # set paths
 current_path=dirname(rstudioapi::getActiveDocumentContext()$path)
