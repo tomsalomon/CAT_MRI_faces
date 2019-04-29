@@ -3,11 +3,11 @@ close all;
 
 
 % Define these variables
-task_num=2;
-ses_num=1;
-cope_lev_1=21;
-cope_lev_2=9;
-cope_lev_3=3;
+task_num=1;
+ses_num=2;
+cope_lev_1=23;
+cope_lev_2=1;
+cope_lev_3=2;
 visualize_fsleyes=false; % True or False
 
 experiment_path='/export/home/DATA/schonberglab/MRI_faces/analysis/BIDS/derivatives/';

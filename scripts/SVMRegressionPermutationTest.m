@@ -1,4 +1,4 @@
-function [trainedClassifier, Accuracy,p, data_norm, W] = SVMRegressionPermutationTest(trainingData,predictorNames,predictedNames,num_permutations,test_title)
+function [trainedClassifier, Accuracy,p, data_norm, W, pred_labels] = SVMRegressionPermutationTest(trainingData,predictorNames,predictedNames,num_permutations,test_title)
 % This function runs an SVM model on a given data set. Performs
 % leave-one-out CV, and if asked, performs permutation test on the data.
 %
@@ -84,6 +84,9 @@ for iter = 1:num_permutations
     % Compute validation accuracy
     real_labels = table2array(inputTable_tmp(:,predictedNames));
     validationAccuracy(iter) = corr(pred_labels_fold,real_labels);
+    if iter ==1
+        pred_labels = pred_labels_fold;
+    end
 end
 
 Accuracy = validationAccuracy(1); % CV accuracy of the real model

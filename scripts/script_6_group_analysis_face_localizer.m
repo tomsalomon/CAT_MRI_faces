@@ -10,9 +10,9 @@ setenv('PATH', [getenv('PATH') ':/share/apps/fsl/bin']);
 
 % Define these variables
 ses_num=1;
-task_num=1;
+task_num=2;
 if ses_num ==1
-    Subjects=[2,4:14,16:17,19:25,27:41,43:49];
+    Subjects=[2,4:14,16:17,19:25,27:41,43:44,46:49];
 elseif ses_num ==2
     Subjects=[2,4:5,8,10:12,14,17,20:23,27,29:31,33:36,38:40,44];
 end

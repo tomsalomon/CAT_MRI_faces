@@ -10,9 +10,22 @@ setenv('PATH', [getenv('PATH') ':/share/apps/fsl/bin']);
 
 % Define these variables
 ses_num=1;
-task_num=1;
+task_num=2;
+model_name = 'SVM'; % can be 'SVM' or 'SVR';
+n_permutations = 1000; % number of permutations for statistical analysis of the model
+% Define strings for inclusion/exclusion (leave empty to skip)
+features_2_include = {'FFA','STS'}; % only include features containing these strings
+features_2_exclude = {'std','size'}; % exclude features containing these strings
+switch model_name
+    case 'SVM'
+        predictedNames = {'prop_bin'};
+        interesting_model_thresh = 0.65; % min CV model accuracy
+    case 'SVR'
+        predictedNames = {'prop'};
+        interesting_model_thresh = 0.4; % min regression coefficient
+end
 if ses_num ==1
-    Subjects=[2,4:14,16:17,19:25,27:41,43:49];
+    Subjects=[2,4:14,16:17,19:25,27:41,43:44,46:49];
 elseif ses_num ==2
     Subjects=[2,4:5,8,10:12,14,17,20:23,27,29:31,33:36,38:40,44];
 end
@@ -71,6 +84,8 @@ switch task_num
         num_of_copes_lev1=[];
         contrast_name={ };
 end
+copes_lev1_2skip = find(contains(contrast_name,{'GSD','Neutral','missed','sanity','WTP','choice','value'},'IgnoreCase',true));
+
 
 [is_HV_contrast,is_LV_contrast,is_All_contrast,is_Sanity_contrast,...
     is_Neutral_contrast]=deal(false(size(contrast_name)));
@@ -129,8 +144,13 @@ data_empty_mat(:,num_of_ROI+1:num_of_ROI*2) = 0; % set size=0 for missing ROI
 models_dim = [num_of_copes_lev2,num_of_copes_lev1];
 num_models = models_dim(1)*models_dim(2);
 % predictorNames = [ROI_names];
-predictorNames = {data_table_var_names{1:end-3}};
-predictedNames = {'prop'};
+predictorNames = data_table_var_names(1:end-3);
+if length(features_2_include)>=1
+predictorNames = predictorNames(contains(predictorNames,features_2_include));
+end
+if length(features_2_exclude)>=1
+predictorNames = predictorNames(~contains(predictorNames,features_2_exclude));
+end
 
 h = waitbar(0,'Computing models');
 for model_ind = 1:num_models
@@ -141,6 +161,9 @@ for model_ind = 1:num_models
     model_table.cope_lev1_name(model_ind) = contrast_name(cope_lev1);
     model_table.cope_lev2_name(model_ind) = contrast_name_lev2(cope_lev2);
     if contrast_type(cope_lev1) == 0
+        continue
+    end
+    if ismember(cope_lev1,copes_lev1_2skip)
         continue
     end
     if ismember(cope_lev2,copes_lev2_2skip)
@@ -162,10 +185,16 @@ for model_ind = 1:num_models
         end
     end
     data_table.prop_bin = sign(data_table.prop-median(data_table.prop)+1e-5); %add small number to avoid 0 for actual median
-    [trainedClassifier, validationAccuracy] = SVMRegressionPermutationTest(data_table,predictorNames,predictedNames);
+    switch model_name
+        case 'SVM'
+            [trainedClassifier, validationAccuracy, ~, ~, ~, pred_labels] = SVMClassifierPermutationTest(data_table,predictorNames,predictedNames);
+        case 'SVR'
+            [trainedClassifier, validationAccuracy, ~, ~, ~, pred_labels] = SVMRegressionPermutationTest(data_table,predictorNames,predictedNames);
+    end
     model_table.data(model_ind) = {data_table};
     model_table.model(model_ind) = {trainedClassifier};
     model_table.accuracy(model_ind) = {validationAccuracy};
+    model_table.prediction(model_ind) = {pred_labels};
     waitbar(model_ind/num_models,h);
 end
 % remove untested models
@@ -176,16 +205,29 @@ close(h)
 model_table_sorted = model_table(ind,:);
 
 %% Permutation testings
-num_interesting_models = sum(cell2mat(model_table_sorted.accuracy) >= 0.3);
+num_interesting_models = sum(cell2mat(model_table_sorted.accuracy) >= interesting_model_thresh);
 model_table_sorted.p(:) = nan;
 for model_i = 1:num_interesting_models
     data = model_table_sorted.data{model_i};
     test_title = sprintf('model %i out of %i',model_i,num_interesting_models);
-    [~,~,p,data_norm,W] = SVMRegressionPermutationTest(data,predictorNames,predictedNames,1000,test_title);
+    
+    switch model_name
+        case 'SVM'
+            [~,~,p,data_norm,W,permutations_accuracy] = SVMClassifierPermutationTest(data,predictorNames,predictedNames,n_permutations,test_title);
+        case 'SVR'
+            [~,~,p,data_norm,W] = SVMRegressionPermutationTest(data,predictorNames,predictedNames,n_permutations,test_title);
+    end
+    
     model_table_sorted.p(model_i)=p;
     model_table_sorted.data_norm(model_i)={data_norm};
     model_table_sorted.W(model_i)={W};
-    SVMRegression_prediction_visualization(model_table_sorted,model_i);
+    model_table_sorted.permutations_accuracy(model_i) = {permutations_accuracy};
+    switch model_name
+        case 'SVM'
+            SVM_prediction_visualization(model_table_sorted,model_i);
+        case 'SVR'
+            SVMRegression_prediction_visualization(model_table_sorted,model_i);
+    end
 end
 
 save([ROI_GLM_analysis_path,'/results_SVM_analysis.mat'])

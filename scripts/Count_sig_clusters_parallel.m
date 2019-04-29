@@ -1,4 +1,4 @@
-clear;
+    clear;
 
 % Define these variables
 task_num=1;

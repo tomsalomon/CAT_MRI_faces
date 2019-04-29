@@ -2,11 +2,11 @@ clear;
 close all;
 
 % Define these variables
-task_num=3;
-ses_num=2;
+task_num=1;
+ses_num=1;
 model = 1;
-cope_lev_1=19;
-cope_lev_2=1;
+cope_lev_1=24;
+cope_lev_2=4;
 cope_lev_3=1;
 visualize_fsleyes=false; % True or False
 zthresh='2.3'; % '2.3' or '3.1' or 'SVC_0*'
@@ -37,8 +37,15 @@ cluster_mask=[origin_dir,sprintf('cluster_mask_zstat%i.nii.gz',cope_lev_3)];
 [~,tmp]=system(['fslstats ',cluster_mask,' -p 100']);
 num_of_sig_cluster=str2double(tmp);
 
-output_filename = sprintf('task_%02i_ses_%02i_model_%02i_cope_%02i_%02i_%02i.nii.gz',...
-task_num,ses_num,model,cope_lev_1,cope_lev_2,cope_lev_3);
+is_SVC = isnan(str2double(zthresh));
+if is_SVC
+str_end = ['_',zthresh];
+else
+    str_end = '';
+end
+    
+output_filename = sprintf('task_%02i_ses_%02i_model_%02i_cope_%02i_%02i_%02i%s.nii.gz',...
+task_num,ses_num,model,cope_lev_1,cope_lev_2,cope_lev_3,str_end);
 if num_of_sig_cluster >= 1
 copyfile(thresh_zstat, [output_dir,output_filename]);
 elseif num_of_sig_cluster == 0

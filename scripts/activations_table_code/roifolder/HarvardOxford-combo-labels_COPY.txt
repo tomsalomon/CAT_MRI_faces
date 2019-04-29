@@ -1,0 +1,111 @@
+1	L Frontal Pole
+2	L Insular Cortex
+3	L Superior Frontal Gyrus
+4	L Middle Frontal Gyrus
+5	L Inferior Frontal Gyrus, pars triangularis
+6	L Inferior Frontal Gyrus, pars opercularis
+7	L Precentral Gyrus
+8	L Temporal Pole
+9	L Superior Temporal Gyrus, anterior division
+10	L Superior Temporal Gyrus, posterior division
+11	L Middle Temporal Gyrus, anterior division
+12	L Middle Temporal Gyrus, posterior division
+13	L Middle Temporal Gyrus, temporooccipital part
+14	L Inferior Temporal Gyrus, anterior division
+15	L Inferior Temporal Gyrus, posterior division
+16	L Inferior Temporal Gyrus, temporooccipital part
+17	L Postcentral Gyrus
+18	L Superior Parietal Lobule
+19	L Supramarginal Gyrus, anterior division
+20	L Supramarginal Gyrus, posterior division
+21	L Angular Gyrus
+22	L Lateral Occipital Cortex, superoir division
+23	L Lateral Occipital Cortex, inferior division
+24	L Intracalcarine Cortex
+25	L Frontal Medial Cortex
+26	L Juxtapositional Lobule Cortex (formerly Supplementary Motor Cortex)
+27	L Subcallosal Cortex
+28	L Paracingulate Gyrus
+29	L Cingulate Gyrus, anterior division
+30	L Cingulate Gyrus, posterior division
+31	L Precuneous Cortex
+32	L Cuneal Cortex
+33	L Frontal Orbital Cortex
+34	L Parahippocampal Gyrus, anterior division
+35	L Parahippocampal Gyrus, posterior division
+36	L Lingual Gyrus
+37	L Temporal Fusiform Cortex, anterior division
+38	L Temporal Fusiform Cortex, posterior division
+39	L Temporal Occipital Fusiform Cortex
+40	L Occipital Fusiform Gyrus
+41	L Frontal Operculum Cortex
+42	L Central Opercular Cortex
+43	L Parietal Operculum Cortex
+44	L Planum Polare
+45	L Heschl's Gyrus (includes H1 and H2)
+46	L Planum Temporale
+47	L Supracalcarine Cortex
+48	L Occipital Pole
+49	R Frontal Pole
+50	R Insular Cortex
+51	R Superior Frontal Gyrus
+52	R Middle Frontal Gyrus
+53	R Inferior Frontal Gyrus, pars triangularis
+54	R Inferior Frontal Gyrus, pars opercularis
+55	R Precentral Gyrus
+56	R Temporal Pole
+57	R Superior Temporal Gyrus, anterior division
+58	R Superior Temporal Gyrus, posterior division
+59	R Middle Temporal Gyrus, anterior division
+60	R Middle Temporal Gyrus, posterior division
+61	R Middle Temporal Gyrus, temporooccipital part
+62	R Inferior Temporal Gyrus, anterior division
+63	R Inferior Temporal Gyrus, posterior division
+64	R Inferior Temporal Gyrus, temporooccipital part
+65	R Postcentral Gyrus
+66	R Superior Parietal Lobule
+67	R Supramarginal Gyrus, anterior division
+68	R Supramarginal Gyrus, posterior division
+69	R Angular Gyrus
+70	R Lateral Occipital Cortex, superoir division
+71	R Lateral Occipital Cortex, inferior division
+72	R Intracalcarine Cortex
+73	R Frontal Medial Cortex
+74	R Juxtapositional Lobule Cortex (formerly Supplementary Motor Cortex)
+75	R Subcallosal Cortex
+76	R Paracingulate Gyrus
+77	R Cingulate Gyrus, anterior division
+78	R Cingulate Gyrus, posterior division
+79	R Precuneous Cortex
+80	R Cuneal Cortex
+81	R Frontal Orbital Cortex
+82	R Parahippocampal Gyrus, anterior division
+83	R Parahippocampal Gyrus, posterior division
+84	R Lingual Gyrus
+85	R Temporal Fusiform Cortex, anterior division
+86	R Temporal Fusiform Cortex, posterior division
+87	R Temporal Occipital Fusiform Cortex
+88	R Occipital Fusiform Gyrus
+89	R Frontal Operculum Cortex
+90	R Central Opercular Cortex
+91	R Parietal Operculum Cortex
+92	R Planum Polare
+93	R Heschl's Gyrus (includes H1 and H2)
+94	R Planum Temporale
+95	R Supracalcarine Cortex
+96	R Occipital Pole
+97	Left Thalamus
+98	Left Caudate
+99	Left Putamen
+100	Left Pallidum
+101	Left Hippocampus
+102	Left Amygdala
+103	Left Accumbens
+104	Right Thalamus
+105	Right Caudate
+106	Right Putamen
+107	Right Pallidum
+108	Right Hippocampus
+109	Right Amygdala
+110	Right Accumbens
+111	Brain-Stem

@@ -158,53 +158,53 @@ dev.off()
 
 # Data organization for a boxplot ----
 
-# data_agg=as.data.frame(aggregate(probe_data,by=list(probe_data$subjectID,probe_data$PairType,probe_data$session), mean, na.rm=TRUE))
-# colnames(data_agg)[1] = "subjectID"
-# Data_by_sub=melt(data_agg,id = c("subjectID", "session" ,"PairType") ,"Outcome")
-# colnames(Data_by_sub)[ncol(Data_by_sub)] = "mean"
-# Data_by_sub$comparison = as.factor(Data_by_sub$PairType)
-# levels(Data_by_sub$comparison)= comparisons
-# Data_by_sub$session_label = as.factor(Data_by_sub$session)
-# levels(Data_by_sub$session_label) = levels(Results_df$session_label)
-# Data_by_sub = Data_by_sub[Data_by_sub$PairType<=2,] 
-# 
-# Results_df$yloc = NA
-# for (row_i in 1:nrow(Results_df)) {
-#   if  (Results_df$comparison[row_i]== "Difference"){
-#     data_i = 0.2 + Data_by_sub$mean[(Data_by_sub$session_label == Results_df$session_label[row_i])]
-#   } else {
-#     data_i = 0.05 + Data_by_sub$mean[(Data_by_sub$session_label == Results_df$session_label[row_i]) &
-#                                        (Data_by_sub$comparison == Results_df$comparison[row_i])]   }
-#   Results_df$yloc[row_i] = max(data_i)
-# }
-# 
-# Results_df2 = subset(Results_df,!comparison=="Difference")
-# Results_df3 = subset(Results_df,comparison=="Difference")
-# tmp_df2 = tmp_df
-# tmp_df2$x_val = tmp_df2$x_val-1
-# tmp_df2$y_val = c(.94, .96, .96, .94)
-# 
-# dev.new(width=1, height=1)
-# ggplot(data=subset(Data_by_sub,!comparison=="Difference"), aes(x=session_label, y=mean, fill=comparison)) + 
-#   # geom_violin(trim=FALSE, position=position_dodge(.8))+
-#   geom_boxplot(notch=TRUE, position=position_dodge(.8), outlier.color = "gray30", outlier.size = 1) +
-#   theme_bw() + theme(legend.position="top",legend.title=element_blank()) + # position legend
-#   theme(axis.title.x=element_blank(),axis.line = element_line(colour = "black"), panel.border = element_blank(), panel.background = element_blank()) + # axis and background formating
-#   theme(aspect.ratio=1,text = element_text(size=20)) + # espenct ration and font size
-#   # geom_dotplot(binaxis='y', position=position_dodge(.8), stackdir='center', dotsize=.5, color = 1) +
-#   geom_hline(yintercept=0.5, linetype="dashed") +
-#   # theme(aspect.ratio=1, legend.position="none") + 
-#   geom_text(data = Results_df2, aes(x=session_label, y = yloc, label = asterisk),parse = TRUE, position=position_dodge(.8), size = 10) +
-#   geom_text(data = Results_df3, aes(x=session_label, y = 0.98, label = asterisk),parse = TRUE,size = 10) +
-#   scale_fill_grey(start = 1, end = .4) +
-#   geom_line(data = tmp_df2, aes(x=x_val,y = y_val)) +
-#   scale_y_continuous("Proportion of trials Go items were chosen",limit=c(0,1),breaks=seq(0, 1, 0.1),expand = c(0,0))  # define y axis properties
+ data_agg=as.data.frame(aggregate(probe_data,by=list(probe_data$subjectID,probe_data$PairType,probe_data$session), mean, na.rm=TRUE))
+ colnames(data_agg)[1] = "subjectID"
+ Data_by_sub=melt(data_agg,id = c("subjectID", "session" ,"PairType") ,"Outcome")
+ colnames(Data_by_sub)[ncol(Data_by_sub)] = "mean"
+ Data_by_sub$comparison = as.factor(Data_by_sub$PairType)
+ levels(Data_by_sub$comparison)= comparisons
+ Data_by_sub$session_label = as.factor(Data_by_sub$session)
+ levels(Data_by_sub$session_label) = levels(Results_df$session_label)
+ Data_by_sub = Data_by_sub[Data_by_sub$PairType<=2,]
 
-  #geom_text(data = SummaryTable, aes(y = yloc*1.1, label = non_significant, fontface=3),size = 3) + 
-  #labs( x = x_lab, y = y_lab) +
-  # theme(axis.title.x=element_blank(), axis.title.y=element_blank()) + # remove x and y labs
-  # scale_fill_grey(start = 0.9, end = .2) +
+ Results_df$yloc = NA
+ for (row_i in 1:nrow(Results_df)) {
+   if  (Results_df$comparison[row_i]== "Difference"){
+     data_i = 0.2 + Data_by_sub$mean[(Data_by_sub$session_label == Results_df$session_label[row_i])]
+   } else {
+     data_i = 0.05 + Data_by_sub$mean[(Data_by_sub$session_label == Results_df$session_label[row_i]) &
+                                        (Data_by_sub$comparison == Results_df$comparison[row_i])]   }
+   Results_df$yloc[row_i] = max(data_i)
+ }
 
-# Results_df_tmp$asterisk[Results_df_tmp$p<0.1]= "scriptstyle('+')"
+ Results_df2 = subset(Results_df,!comparison=="Difference")
+ Results_df3 = subset(Results_df,comparison=="Difference")
+ tmp_df2 = tmp_df
+ # tmp_df2$x_val = tmp_df2$x_val-1
+tmp_df2$y_val = c(.94, .96, .96, .94)
+
+dev.new(width=1, height=1)
+ggplot(data=subset(Data_by_sub,!comparison=="Difference"), aes(x=session_label, y=mean, fill=comparison)) +
+  # geom_violin(trim=FALSE, position=position_dodge(.8))+
+  geom_boxplot(notch=TRUE, position=position_dodge(.8), outlier.color = "gray30", outlier.size = 1) +
+  theme_bw() + theme(legend.position="top",legend.title=element_blank()) + # position legend
+  theme(axis.title.x=element_blank(),axis.line = element_line(colour = "black"), panel.border = element_blank(), panel.background = element_blank()) + # axis and background formating
+  theme(aspect.ratio=1,text = element_text(size=20)) + # espenct ration and font size
+  # geom_dotplot(binaxis='y', position=position_dodge(.8), stackdir='center', dotsize=.5, color = 1) +
+  geom_hline(yintercept=0.5, linetype="dashed") +
+  # theme(aspect.ratio=1, legend.position="none") +
+  geom_text(data = Results_df2, aes(x=session_label, y = yloc, label = asterisk),parse = TRUE, position=position_dodge(.8), size = 10) +
+  geom_text(data = Results_df3, aes(x=session_label, y = 0.98, label = asterisk),parse = TRUE,size = 10) +
+  scale_fill_grey(start = 1, end = .4) +
+  geom_line(data = tmp_df2, aes(x=x_val,y = y_val)) +
+  scale_y_continuous("Proportion of trials Go items were chosen",limit=c(0,1),breaks=seq(0, 1, 0.1),expand = c(0,0))  # define y axis properties
+
+  geom_text(data = SummaryTable, aes(y = yloc*1.1, label = non_significant, fontface=3),size = 3) +
+  labs( x = x_lab, y = y_lab) +
+  theme(axis.title.x=element_blank(), axis.title.y=element_blank()) + # remove x and y labs
+  scale_fill_grey(start = 0.9, end = .2) +
+
+Results_df_tmp$asterisk[Results_df_tmp$p<0.1]= "scriptstyle('+')"
 
 #####

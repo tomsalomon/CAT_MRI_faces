@@ -1,6 +1,5 @@
-# Cue Approach as a General Mechanism for Long Term Non-Reinforced Behavioral Change
-# ==================================================================
-# Salomon, T., Botvinick-Nezer, R., Gutentag, T., Gera, R., Iwanir, R., Tamir, M., Schonberg, T.
+
+# Salomon, T., Botvinick-Nezer, Schonberg, T.
 
 # Instructions: 
 # ------------

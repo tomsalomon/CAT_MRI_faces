@@ -12,7 +12,13 @@ setenv('PATH', [getenv('PATH') ':/share/apps/fsl/bin']);
 % Define the following variables
 subjects = 1:50;
 main_path = [pwd,'/../../'];
-ROI_table = readtable('selected_ROI_table_2018_08_15.txt','delimiter','\t');
+ROI_table_options = dir('./selected_ROI_table*.txt');
+if length(ROI_table_options)==1
+    ROI_table_selection=1;
+else
+    ROI_table_selection = listdlg('PromptString','Select an analysis directory:','SelectionMode','single','ListString',{ROI_table_options.name},'ListSize',[500,400]);
+end
+ROI_table = readtable(ROI_table_options(ROI_table_selection).name,'delimiter','\t');
 p_thresh = 0.00001; % threshold to detect outliers
 
 ROI_mat = table2array(ROI_table);
@@ -112,7 +118,7 @@ ROI_mat2(ROIs_2_remove)=nan;
 ROI_table2 = ROI_table;
 ROI_table2(:,1+(1:num_ROIs)) = array2table(ROI_mat2);
 date = clock;
-writetable(ROI_table2,sprintf('selected_ROI_table_%i_%02i_%02i',date(1),date(2),date(3)),'delimiter','\t')
+%writetable(ROI_table2,sprintf('selected_ROI_table_%i_%02i_%02i',date(1),date(2),date(3)),'delimiter','\t')
 % ROI_center_mass_table=array2table(ROI_center_mass_mat,'VariableNames',ROI_table.Properties.VariableNames(1:1+num_ROIs))
 
 

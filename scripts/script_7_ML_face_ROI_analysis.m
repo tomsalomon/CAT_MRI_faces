@@ -12,11 +12,11 @@ setenv('PATH', [getenv('PATH') ':/share/apps/fsl/bin']);
 ses_num=1;
 task_num=3;
 if ses_num ==1
-    Subjects=[2,4:14,16:17,19:25,27:41,43:49];
+    Subjects=[2,4:14,16:17,19:25,27:41,43:44,46:49];
 elseif ses_num ==2
     Subjects=[2,4:5,8,10:12,14,17,20:23,27,29:31,33:36,38:40,44];
 end
-number_cores = 30;
+number_cores = 40;
 group_analysis_path = [pwd,'/../models/model001'];
 
 task_names={'task-responsetostim','task-training','task-probe','task-localizer'};
@@ -177,7 +177,7 @@ model_table_sorted.p(:) = nan;
 for model_i = 1:num_interesting_models
     data = model_table_sorted.data{model_i};
     test_title = sprintf('model %i out of %i',model_i,num_interesting_models);
-    [~,~,p,data_norm,W] = SVMClassifierPermutationTest(data,predictorNames,predictedNames,100,test_title);
+    [~,~,p,data_norm,W] = SVMClassifierPermutationTest(data,predictorNames,predictedNames,500,test_title);
     model_table_sorted.p(model_i)=p;
     model_table_sorted.data_norm(model_i)={data_norm};
     model_table_sorted.W(model_i)={W};

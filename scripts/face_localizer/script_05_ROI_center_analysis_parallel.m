@@ -11,16 +11,21 @@ setenv('FSLOUTPUTTYPE','NIFTI_GZ'); %the output type
 setenv('PATH', [getenv('PATH') ':/share/apps/fsl/bin']);
 
 % Define the following variables
-
 ses_num =1 ;
-ROI_table = readtable('selected_ROI_table_2018_08_15.txt','delimiter','\t');
+ROI_table_options = dir('./selected_ROI_table*.txt');
+if length(ROI_table_options)==1
+    ROI_table_selection=1;
+else
+    ROI_table_selection = listdlg('PromptString','Select an analysis directory:','SelectionMode','single','ListString',{ROI_table_options.name},'ListSize',[500,400]);
+end
+ROI_table = readtable(ROI_table_options(ROI_table_selection).name,'delimiter','\t');
 p_thresh = 0.00001; % threshold to detect outliers
-size_thresh = 12; % threshold to minimal cluster size
+size_thresh = 10; % threshold to minimal cluster size
 % if you want to exclude based on this threshold, re run script 04, with the new table created by this script
 number_cores = 25;
 
 if ses_num ==1
-    subjects=[2,4:14,16:17,19:25,27:41,43:49];
+    subjects=[2,4:14,16:17,19:25,27:41,43:44,46:49];
 elseif ses_num ==2
     subjects=[2,4:5,8,10:12,14,17,20:23,27,29:31,33:36,38:40,44];
 end
@@ -41,7 +46,7 @@ parfor subject_i = 1:numel(subjects)
     sub_name =  sprintf('sub-%03i',subject);
     sub_path = [pwd,'/Functional_ROI/',sub_name,'/'];
     for ROI_i = 1:num_ROIs
-        cluster_i = ROI_mat(subject_i,1+ROI_i);
+        cluster_i = ROI_mat(subject,1+ROI_i);
         if isnan(cluster_i) % in case the ROI was not found - skip
             continue
         end
@@ -120,8 +125,11 @@ ROI_mat2(ROIs_2_remove)=nan;
 ROI_table2 = ROI_table;
 ROI_table2(:,1+(1:num_ROIs)) = array2table(ROI_mat2);
 date = clock;
-writetable(ROI_table2,sprintf('selected_ROI_table_%i_%02i_%02i',date(1),date(2),date(3)),'delimiter','\t')
+%writetable(ROI_table2,sprintf('selected_ROI_table_%i_%02i_%02i',date(1),date(2),date(3)),'delimiter','\t')
 
 mean_center_mass = reshape(nanmean(ROI_center_mass_mat),[6,3]);
 mean_center_mass = reshape(nanmean(ROI_size_mat),[6,1]);
 mean_center_mass = reshape(nanmean(ROI_size_mat>0),[6,1]);
+valid_ROI_prop = mean(~isnan(ROI_size_mat));
+valid_ROI_size = nanmean(ROI_size_mat);
+

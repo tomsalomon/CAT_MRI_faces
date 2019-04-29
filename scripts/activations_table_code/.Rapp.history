@@ -1,0 +1,5 @@
+load("/Users/papanadipapanadi/Google Drive/Nadav/Tel_Aviv_University/Tom_LAB/Experiments/tools/activation table code/HOA_rois.RData")
+load("/Users/papanadipapanadi/Google Drive/Nadav/Tel_Aviv_University/Tom_LAB/Experiments/tools/activation table code/HOA_rois.RData")
+a<- load("/Users/papanadipapanadi/Google Drive/Nadav/Tel_Aviv_University/Tom_LAB/Experiments/tools/activation table code/HOA_rois.RData")
+a
+a[]

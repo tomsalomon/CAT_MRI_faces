@@ -1,0 +1,29 @@
+#!/bin/sh
+
+create_fsfs()
+{ 
+echo $COPE_NUM $SESSION
+
+cd /export/home/DATA/schonberglab/MRI_snacks/analysis/bids/derivatives/model/model001/designs/group/responsetosnacks/${SESSION}
+
+sed -e s/cope1/${COPE_NUM}/g $FEAT_TEMPLATE >  ${DESIGN_NAME}
+
+}
+
+ for cope_count in cope1 cope2 cope3 cope4 cope5 cope6 cope7 cope8 cope9 cope10 cope11 cope12 cope13 cope14 cope15 cope16 cope17 cope18 cope19 cope20 cope21 cope22 cope23 cope24 cope25 cope26 cope27 cope28 cope29 cope30 cope31
+
+do
+	 for session in after_before followup_before followup_after
+	 do
+	     COPE_NUM=$cope_count
+	     SESSION=$session
+	     DESIGN_NAME=(design_${SESSION}_${COPE_NUM}_model001.fsf) 
+	     DESIGN_INDEX="design_${SESSION}_${COPE_NUM}_model001.fsf"
+	     FEAT_TEMPLATE=/export/home/DATA/schonberglab/MRI_snacks/analysis/bids/derivatives/model/model001/designs/group/responsetosnacks/${SESSION}/design_template_${session}.fsf
+	     create_fsfs
+	     DESIGN_NAME=(design_${SESSION}_${COPE_NUM}_model001_zthresh23.fsf) 
+	     DESIGN_INDEX="design_${SESSION}_${COPE_NUM}_model001_zthresh23.fsf"
+	     FEAT_TEMPLATE=/export/home/DATA/schonberglab/MRI_snacks/analysis/bids/derivatives/model/model001/designs/group/responsetosnacks/${SESSION}/design_template_${session}_zthresh23.fsf
+	     create_fsfs
+	 done
+done

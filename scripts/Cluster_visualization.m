@@ -2,14 +2,14 @@ clear;
 close all;
 
 % Define these variables
-task_num=2;
+task_num=1;
 ses_num=1;
 model = 1;
-cope_lev_1=21;
-cope_lev_2=8;
-cope_lev_3=2;
+cope_lev_1=	13;
+cope_lev_2=1;
+cope_lev_3=1;
 visualize_fsleyes=false; % True or False
-zthresh='SVC_04'; % '2.3' or '3.1' or 'SVC_0*'
+zthresh='2.3'; % '2.3' or '3.1' or 'SVC_0*'
 experiment_path='/export/home/DATA/schonberglab/MRI_faces/analysis/BIDS/derivatives/';
 
 % set FSL environment

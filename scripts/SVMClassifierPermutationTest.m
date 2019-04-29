@@ -1,4 +1,4 @@
-function [trainedClassifier, Accuracy,p, data_norm, W] = SVMClassifierPermutationTest(trainingData,predictorNames,predictedNames,num_permutations,test_title)
+function [trainedClassifier, Accuracy,p, data_norm, W, pred_labels,validationAccuracy] = SVMClassifierPermutationTest(trainingData,predictorNames,predictedNames,num_permutations,test_title)
 % This function runs an SVM model on a given data set. Performs
 % leave-one-out CV, and if asked, performs permutation test on the data.
 %
@@ -81,16 +81,30 @@ for iter = 1:num_permutations
         % CV prediction
         data2test = inputTable_tmp(test_data,predictorNames);
         pred_labels_fold(leave_out) = predict(classificationSVM,data2test);
+       if iter ==1
+           model = classificationSVM;
+        pred_labels(leave_out) = (table2array(data2test)/model.KernelParameters.Scale)*model.Beta + model.Bias;
+       end
+    
     end
     % Compute validation accuracy
     real_labels = table2array(inputTable_tmp(:,predictedNames));
     validationAccuracy(iter) = mean(pred_labels_fold == real_labels);
+
 end
 
 Accuracy = validationAccuracy(1); % CV accuracy of the real model
 if num_permutations>1
     close(h)
     p = nanmean(validationAccuracy(2:end)>=validationAccuracy(1)); % proportion of permuted model with similar or better accuracy
+
+    figure;
+    histogram(validationAccuracy(validationAccuracy<validationAccuracy(1)),'BinWidth',1/num_samples);
+    xlabel('Model Accuracy')
+    hold on; 
+    histogram(validationAccuracy(validationAccuracy>=validationAccuracy(1)),'FaceColor','r','BinWidth',1/num_samples);
+    hold off; 
+
 else
     p=nan;
 end
